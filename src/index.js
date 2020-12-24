@@ -1,1 +1,3 @@
-console.log('HII')
+const Wallet = require('./wallet');
+
+new Wallet();
