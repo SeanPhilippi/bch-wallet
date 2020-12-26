@@ -6,8 +6,47 @@
   <!-- defer allows the script to be executed after the html is attached to the DOM -->
   <script src="/bundle.js" defer></script>
   <title>Document</title>
+  <style>
+    * {
+      font-fmaily: Arial, Helvetica, sans-serif;
+    }
+
+    input {
+      height: 35px;
+    }
+
+    button {
+      height: 35px;
+    }
+  </style>
 </head>
 <body>
-  hello world
+  <section>
+    <h2>Balance</h2>
+    <span id='balance-display'>... loading ...</span> satoshis
+  </section>
+  <section>
+    <h2>Deposit Address</h2>
+    <span id='deposit-address-display'>... loading ...</span>
+  <section>
+  </section>
+    <h2>Withdrawal</h2>
+    <form id='withdrawal-form'>
+      <input type="text" name="withdrawal-address" placeholder="Address" />
+      <input type="text" name="withdrawal-amount" placeholder="Amount" />
+      <button>Withdraw</button>
+    </form>
+  </section>
+  </section>
+    <h2>Import / Export</h2>
+    <form id='import-form'>
+      <input type="text" name="private-key" placeholder="Private Key" />
+      <button>Import</button>
+    </form>
+    <div>
+      <button id='export-button'>Show / Hide</button>
+      <span id='private-key-display'>(hidden)</span>
+    </div>
+  </section>
 </body>
 </html>

@@ -3045,7 +3045,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) *
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("const Wallet = __webpack_require__(/*! ./wallet */ \"./src/wallet.js\");\n\nnew Wallet();\n\n//# sourceURL=webpack:///./src/index.js?");
+eval("const Wallet = __webpack_require__(/*! ./wallet */ \"./src/wallet.js\");\nconst wallet = new Wallet();\n\nconst balanceDisplay = document.getElementById('balance-display');\nconst depositAddressDisplay = document.getElementById('deposit-address-display');\nconst withdrawalForm = document.getElementById('withdrawal-form');\nconst withdrawalAddress = document.getElementsByName('withdrawal-address').item(0);\nconst withdrawalAmount = document.getElementsByName('withdrawal-amount').item(0);\nconst importForm = document.getElementById('import-form');\nconst privateKey = document.getElementsByName('priavte-key').item(0);\nconst exportButton = document.getElementById('export-button');\nconst privateKeyDisplay = document.getElementById('private-key-display');\n\nbalanceDisplay.innerText = wallet.getBalance();\nconsole.log('balanceDisplay', balanceDisplay.innerText)\n\ndepositAddressDisplay.innerText = wallet.getDepositAddress();\n\nwithdrawalForm.addEventListener('submit', e => {\n  e.preventDefault();\n  const txId = wallet.withdraw(withdrawalAddress.value, withdrawalAmount.value);\n  alert(['Transaction ID:', txId].join(' '));\n});\n\nimportForm.addEventListener('submit', e => {\n  e.preventDefault();\n  console.log('privateKey', privateKey.value)\n});\n\nexportButton.addEventListener('click', () => {\n  if (privateKeyDisplay.innerText === '(hidden)') {\n    privateKeyDisplay.innerText = wallet.getPrivateKey();\n  } else {\n    privateKeyDisplay.innerText = '(hidden)';\n  }\n});\n\n\n//# sourceURL=webpack:///./src/index.js?");
 
 /***/ }),
 
@@ -3056,7 +3056,7 @@ eval("const Wallet = __webpack_require__(/*! ./wallet */ \"./src/wallet.js\");\n
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("const bitcore = __webpack_require__(/*! bitcore-lib-cash */ \"./node_modules/bitcore-lib-cash/index.js\");\nconst fetch = __webpack_require__(/*! whatwg-fetch */ \"./node_modules/whatwg-fetch/fetch.js\").fetch\nfunction Wallet() {\n  console.log('Constructing a wallet.');\n  console.log('fetch', fetch);\n  console.log('bitcore', bitcore);\n};\n\nmodule.exports = Wallet;\n\n//# sourceURL=webpack:///./src/wallet.js?");
+eval("const bitcore = __webpack_require__(/*! bitcore-lib-cash */ \"./node_modules/bitcore-lib-cash/index.js\");\nconst fetch = __webpack_require__(/*! whatwg-fetch */ \"./node_modules/whatwg-fetch/fetch.js\").fetch\nfunction Wallet() {\n  console.log('Constructing a wallet reeee.');\n  console.log('fetch', fetch);\n  console.log('bitcore', bitcore);\n};\n\nWallet.prototype.getBalance = function getBalance() {\n  return 'getBalance';\n}\n\nWallet.prototype.getDepositAddress = function getDepositAddress() {\n  return 'getDepositAddress';\n}\n\nWallet.prototype.withdraw = function withdraw(address, value) {\n  return ['withdraw', address, value].join(' ');\n}\n\nWallet.prototype.getPrivateKey = function getPrivateKey() {\n  return 'getPrivateKey';\n}\n\nmodule.exports = Wallet;\n\n//# sourceURL=webpack:///./src/wallet.js?");
 
 /***/ }),
 
