@@ -7,7 +7,7 @@ const withdrawalForm = document.getElementById('withdrawal-form');
 const withdrawalAddress = document.getElementsByName('withdrawal-address').item(0);
 const withdrawalAmount = document.getElementsByName('withdrawal-amount').item(0);
 const importForm = document.getElementById('import-form');
-const privateKey = document.getElementsByName('priavte-key').item(0);
+const privateKey = document.getElementsByName('private-key').item(0);
 const exportButton = document.getElementById('export-button');
 const privateKeyDisplay = document.getElementById('private-key-display');
 
