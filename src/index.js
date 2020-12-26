@@ -1,5 +1,14 @@
 const Wallet = require('./wallet');
-const wallet = new Wallet();
+let wallet = new Wallet();
+if (localStorage.getItem('bchwallet:privateKey') === null) {
+  wallet = new Wallet();
+  // if no wallet, create wallet class, and call it's getPrivateKey() method
+  // and store the returned private key in localStorage
+  localStorage.setItem('bchwallet:privateKey', wallet.getPrivateKey());
+} else {
+  // if private key if found, pass it in as argument to Wallet class.
+  wallet = new Wallet(localStorage.getItem('bchwallet:privateKey'));
+}
 
 const balanceDisplay = document.getElementById('balance-display');
 const depositAddressDisplay = document.getElementById('deposit-address-display');
@@ -12,7 +21,6 @@ const exportButton = document.getElementById('export-button');
 const privateKeyDisplay = document.getElementById('private-key-display');
 
 balanceDisplay.innerText = wallet.getBalance();
-console.log('balanceDisplay', balanceDisplay.innerText)
 
 depositAddressDisplay.innerText = wallet.getDepositAddress();
 
@@ -23,8 +31,13 @@ withdrawalForm.addEventListener('submit', e => {
 });
 
 importForm.addEventListener('submit', e => {
+  // on submitting the form, save entered privateKey into local storage and reload page
   e.preventDefault();
-  console.log('privateKey', privateKey.value)
+  // trim any accidental white space from copy/pasted keys
+  const privateKeyValue = privateKey.value.trim();
+  localStorage.setItem('bchwallet:privateKey', privateKeyValue);
+  privateKey.value = '';
+  window.location.reload();
 });
 
 exportButton.addEventListener('click', () => {
