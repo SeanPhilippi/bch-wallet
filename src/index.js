@@ -20,7 +20,11 @@ const privateKey = document.getElementsByName('private-key').item(0);
 const exportButton = document.getElementById('export-button');
 const privateKeyDisplay = document.getElementById('private-key-display');
 
-balanceDisplay.innerText = wallet.getBalance();
+wallet.getBalance().then(balance => {
+  balanceDisplay.innerText = balance;
+}).catch(err => {
+  alert(err.message || err.title || 'Unexpected error.');
+});
 
 depositAddressDisplay.innerText = wallet.getDepositAddress();
 

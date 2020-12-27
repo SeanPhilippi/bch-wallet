@@ -1,5 +1,6 @@
 const bitcore = require('bitcore-lib-cash');
-const fetch = require('whatwg-fetch').fetch
+const fetch = require('whatwg-fetch').fetch;
+
 function Wallet(privateKey) {
   if (privateKey) {
     // WIF = wallet import format
@@ -11,7 +12,18 @@ function Wallet(privateKey) {
 };
 
 Wallet.prototype.getBalance = function getBalance() {
-  return 'getBalance';
+  return fetch(`https://rest.bitcoin.com/v2/address/details/${this.getDepositAddress()}`).then(
+    res => {
+      if (!res.ok) {
+        throw new Error('Fetching balance failed. Please, try again later.');
+      }
+      return res.json();
+    }
+  ).then(details => {
+    console.log('details', details)
+    // balance displayed in satoshis
+    return details.balanceSat;
+  });
 }
 
 Wallet.prototype.getDepositAddress = function getDepositAddress() {
