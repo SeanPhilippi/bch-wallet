@@ -21,8 +21,11 @@ Wallet.prototype.getBalance = function getBalance() {
     }
   ).then(details => {
     console.log('details', details)
-    // balance displayed in satoshis
-    return details.balanceSat;
+    // balanceSat is balance displayed in satoshis
+    // adding unconfirmedBalanceSat because the balance value is just what has made it
+    // into the blockchain because the blocks have been mined by miners adding
+    // unconfirmedBalanceSat will give you what the real total will be once it's all on the blockchain
+    return details.balanceSat + details.unconfirmedBalanceSat;
   });
 }
 
