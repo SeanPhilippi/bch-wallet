@@ -72,6 +72,8 @@ Wallet.prototype.withdraw = function withdraw(address, amount) {
     if (text.match(/^"[0-9a-fA-F]{64}"$/) === null) {
       throw new Error(`Broadcasting transaction failed with error: ${text}. Please try again.`);
     }
+    // valid transaction id
+    return text;
   })
 }
 
