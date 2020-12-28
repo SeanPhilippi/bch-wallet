@@ -15,7 +15,7 @@ Wallet.prototype.getBalance = function getBalance() {
   return fetch(`https://rest.bitcoin.com/v2/address/details/${this.getDepositAddress()}`).then(
     res => {
       if (!res.ok) {
-        throw new Error('Fetching balance failed. Please, try again later.');
+        throw new Error('Fetching balance failed. Please try again later.');
       }
       return res.json();
     }
@@ -35,8 +35,44 @@ Wallet.prototype.getDepositAddress = function getDepositAddress() {
   return this.privateKey.toPublicKey().toAddress().toString();
 }
 
-Wallet.prototype.withdraw = function withdraw(address, value) {
-  return ['withdraw', address, value].join(' ');
+Wallet.prototype.withdraw = function withdraw(address, amount) {
+  // store this value here as self, since in the then() the
+  // this value will no longer reference the Wallet
+  const self = this;
+  return fetch(`https://rest.bitcoin.com/v2/address/utxo/${this.getDepositAddress()}`).then(res => {
+    if (!res.ok) {
+      throw new Error('Fetching UTXOs failed. Please try again later.');
+    }
+    return res.json();
+  }).then(res => {
+    console.log('utxos', res.utxos)
+    // balance is the sum of all the satoshis in our utxos
+    // utxo = unspent transaction output
+    const balance = res.utxos.reduce((acc, utxo) => acc + utxo.satoshis, 0);
+    console.log('balance', balance)
+    let minerFee = 250; // make adjustable later
+    const transaction = new bitcore.Transaction()
+      .from(res.utxos)
+      .to(address, amount)
+      .to(self.getDepositAddress(), balance - amount - minerFee)
+      .sign(self.privateKey);
+    // grabs transaction object and produces a raw transaction from it
+    // checks that it's been signed, etc, if not, it will fail
+    const rawTransaction = tranaction.checkedSerialize();
+    return fetch(`https://rest.bitcoin.com/v2/rawtransactions/sendRawTransaction/${rawTransaction}`, {
+      method: 'POST',
+    })
+  }).then(res => {
+    if (!res.ok) {
+      throw new Error('Broadcasting tranaction failed. Please try again later.');
+    }
+    return res.text();
+  }).then(text => {
+    // test whether the text contains a valid transaction id
+    if (text.match(/^"[0-9a-fA-F]{64}"$/) === null) {
+      throw new Error(`Broadcasting transaction failed with error: ${text}. Please try again.`);
+    }
+  })
 }
 
 Wallet.prototype.getPrivateKey = function getPrivateKey() {

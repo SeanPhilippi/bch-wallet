@@ -20,18 +20,26 @@ const privateKey = document.getElementsByName('private-key').item(0);
 const exportButton = document.getElementById('export-button');
 const privateKeyDisplay = document.getElementById('private-key-display');
 
+const handleError = err => {
+  alert(err.message || err.title || 'Unexpected error.');
+};
+
 wallet.getBalance().then(balance => {
   balanceDisplay.innerText = balance;
-}).catch(err => {
-  alert(err.message || err.title || 'Unexpected error.');
-});
+}).catch(handleError);
 
 depositAddressDisplay.innerText = wallet.getDepositAddress();
 
 withdrawalForm.addEventListener('submit', e => {
   e.preventDefault();
-  const txId = wallet.withdraw(withdrawalAddress.value, withdrawalAmount.value);
-  alert(['Transaction ID:', txId].join(' '));
+  const withdrawalAddressValue = withdrawalAddress.value.trim();
+  const withdrawalAmountValue = +withdrawalAmount.value;
+  wallet.withdraw(withdrawalAddressValue, withdrawalAmountValue).then(
+    txId => {
+      alert(`Transaction ID: ${txId}`);
+      window.location.reload();
+    }
+  ).catch(handleError);
 });
 
 importForm.addEventListener('submit', e => {
