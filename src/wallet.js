@@ -76,12 +76,13 @@ Wallet.prototype.withdraw = function withdraw(address, amount) {
       throw new Error('Insufficient balance.');
     }
 
-    let transaction = new bitcore.Transaction().from(utxos);
+    let transaction = new bitcore.Transaction().from(res.utxos);
 
     // outputs creates need to be greater than the dust amount
     // outputs that are made up by fees that are 1/3 or more are not allowed in bch network
     // to prevent dust outputs
     if (balance - amount - minerFee2 < DUST_LIMIT) {
+      // single output to 1 address with no change amount
       transaction = transaction.to(address, amount);
     } else {
       // if sending bch to self, set 'to' address to own address, and subtract minerfee for single outputs from balance

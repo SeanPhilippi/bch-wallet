@@ -1,0 +1,7 @@
+- create a prompt where a user is forced to save their generated private key to their local machine
+- allow the fee to be adjustable
+- display bch as bch instead of satoshis in wallet
+- allow for multiple addresses (for privacy)
+- add ability to publish transaction data to the blockchain
+- add max button/calculation for withdrawal amount
+- look into testnet vs mainnet
