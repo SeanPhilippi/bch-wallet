@@ -19,6 +19,7 @@ const estimateTransactionBytes = (inputCount, outputCount) => {
   // the bytes of the has of the public key among other things add up to roughly 149 bytes,
   // 149 being an overestimate so that the fee is never less than wanted.
   // 34 is a roughly amount of bytes for the hash of the public key
+  // the 10 is a sum of various meta-data fields that are included in a transaction
   return inputCount * 149 + outputCount * 34 + 10;
 }
 
@@ -63,11 +64,12 @@ Wallet.prototype.withdraw = function withdraw(address, amount) {
     console.log('balance', balance)
     // make adjustable later
     // 1 or 2 outputs
+    // transaction bytes * 1 = fee amount since 1 satoshi is all that is needed to send bch transactions
     let minerFee1 = estimateTransactionBytes(res.utxos.length, 1); // * 5 would be 5 satoshis / byte
     let minerFee2 = estimateTransactionBytes(res.utxos.length, 2); // * 5 would be 5 satoshis / byte
 
     if (amount < DUST_LIMIT) {
-      throw new Error('Output amount below dust limit.');
+      throw new Error('Output amount is below the dust limit.');
     }
 
     if (balance - amount < minerFee1) {
@@ -76,12 +78,23 @@ Wallet.prototype.withdraw = function withdraw(address, amount) {
 
     let transaction = new bitcore.Transaction().from(utxos);
 
+    // outputs creates need to be greater than the dust amount
+    // outputs that are made up by fees that are 1/3 or more are not allowed in bch network
+    // to prevent dust outputs
     if (balance - amount - minerFee2 < DUST_LIMIT) {
       transaction = transaction.to(address, amount);
     } else {
-      transaction = transaction.to(address, amount);
-      transaction = transaction.to(self.getDepositAddress(), balance - amount - minerFee2);
+      // if sending bch to self, set 'to' address to own address, and subtract minerfee for single outputs from balance
+      if (new bitcoin.Address(address).toString() === self.getDepositAddress()) {
+        transaction = transaction.to(self.getDepositAddress(), balance - minerFee1);
+      } else {
+        // else send the coin to the given address, and send the change amount
+        // (balance - amount - 2 output minerfee) back to self
+        transaction = transaction.to(address, amount);
+        transaction = transaction.to(self.getDepositAddress(), balance - amount - minerFee2);
+      }
     }
+
     transaction = transaction.sign(self.privateKey);
     // grabs transaction object and produces a raw transaction from it
     // checks that it's been signed, etc, if not, it will fail
